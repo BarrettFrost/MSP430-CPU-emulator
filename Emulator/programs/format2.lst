@@ -1,0 +1,127 @@
+.define address 00300h
+
+start:
+mov.b #150, r4
+
+0x0000: 0x4074 mov.b #0x96, r4                          cycles: 2
+0x0002: 0x0096
+
+rrc.b r4
+
+0x0004: 0x1044 rrc.b r4                                 cycles: 1
+
+mov.b #200, r5
+
+0x0006: 0x4075 mov.b #0xc8, r5                          cycles: 2
+0x0008: 0x00c8
+
+setc
+
+0x000a: 0xd312 setc  --  bis.w #1, SR                   cycles: 1
+
+rrc.b r5
+
+0x000c: 0x1045 rrc.b r5                                 cycles: 1
+
+mov #-8, r6
+
+0x000e: 0x4036 mov.w #0xfff8, r6                        cycles: 2
+0x0010: 0xfff8
+
+rra r6
+
+0x0012: 0x1106 rra.w r6                                 cycles: 1
+
+mov #00FFFh, r7
+
+0x0014: 0x4037 mov.w #0x0fff, r7                        cycles: 2
+0x0016: 0x0fff
+
+swpb r7
+
+0x0018: 0x1087 swpb r7                                  cycles: 1
+
+mov #000FFh, r8
+
+0x001a: 0x4038 mov.w #0x00ff, r8                        cycles: 2
+0x001c: 0x00ff
+
+sxt r8
+
+0x001e: 0x1188 sxt r8                                   cycles: 1
+
+mov #address, r1
+
+0x0020: 0x4031 mov.w #0x0300, SP                        cycles: 2
+0x0022: 0x0300
+
+PUSH #0FFFFh
+
+0x0024: 0x1233 push.w #-1                               cycles: 3
+
+PUSH.b #0FFh
+
+0x0026: 0x1273 push.b #-1                               cycles: 3
+
+mov #address, r11
+
+0x0028: 0x403b mov.w #0x0300, r11                       cycles: 2
+0x002a: 0x0300
+
+sub #4, r11
+
+0x002c: 0x822b sub.w #4, r11                            cycles: 1
+
+mov @r11+, r12
+
+0x002e: 0x4b3c mov.w @r11+, r12                         cycles: 2
+
+mov @r11, r13 
+
+0x0030: 0x4b2d mov.w @r11, r13                          cycles: 2
+
+call &register
+
+0x0032: 0x1292 call &0x003e                             cycles: 5
+0x0034: 0x003e
+
+mov #1000, r10
+
+0x0036: 0x403a mov.w #0x03e8, r10                       cycles: 2
+0x0038: 0x03e8
+
+BIS #00010h,SR
+
+0x003a: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x003c: 0x0010
+
+register:
+mov #1000, r9
+
+0x003e: 0x4039 mov.w #0x03e8, r9                        cycles: 2
+0x0040: 0x03e8
+
+ret
+
+0x0042: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+.enddata sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                         start 00000000 0
+                      register 0000003e 0
+ -> Total symbols: 2
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 23
+   Code Bytes: 68
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0043 (67)
+

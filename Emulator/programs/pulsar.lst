@@ -1,0 +1,867 @@
+
+
+.define display 00500h
+.define copy 00600h
+.define registers 00700h
+
+; conways game of life 15 x 15 pulsar
+
+init:
+
+mov #0, r4
+
+0x0000: 0x4304 mov.w #0, r4                             cycles: 1
+
+mov #1, r5
+
+0x0002: 0x4315 mov.w #1, r5                             cycles: 1
+
+mov #4, r8
+
+0x0004: 0x4228 mov.w #4, r8                             cycles: 1
+
+mov #display, r9
+
+0x0006: 0x4039 mov.w #0x0500, r9                        cycles: 2
+0x0008: 0x0500
+
+call &initArray
+
+0x000a: 0x1292 call &0x0026                             cycles: 5
+0x000c: 0x0026
+
+mov #copy, r9    ; copy of the array
+
+0x000e: 0x4039 mov.w #0x0600, r9                        cycles: 2
+0x0010: 0x0600
+
+call &initArray
+
+0x0012: 0x1292 call &0x0026                             cycles: 5
+0x0014: 0x0026
+
+call &refresh
+
+0x0016: 0x1292 call &0x0400                             cycles: 5
+0x0018: 0x0400
+
+mov #display, r9
+
+0x001a: 0x4039 mov.w #0x0500, r9                        cycles: 2
+0x001c: 0x0500
+
+mov #0, r10    ; row counter
+
+0x001e: 0x430a mov.w #0, r10                            cycles: 1
+
+mov #0, r6     ; column counter
+
+0x0020: 0x4306 mov.w #0, r6                             cycles: 1
+
+mov #0, r7     ; game counter
+
+0x0022: 0x4307 mov.w #0, r7                             cycles: 1
+
+jmp loop
+
+0x0024: 0x3c71 jmp 0x0108  (offset: 226)                cycles: 2
+
+
+
+initArray:
+
+mov #1, 4(r9)
+
+0x0026: 0x4399 mov.w #1, 4(r9)                          cycles: 4
+0x0028: 0x0004
+
+mov #1, 10(r9)
+
+0x002a: 0x4399 mov.w #1, 10(r9)                         cycles: 4
+0x002c: 0x000a
+
+mov #1, 19(r9)
+
+0x002e: 0x4399 mov.w #1, 19(r9)                         cycles: 4
+0x0030: 0x0013
+
+mov #1, 25(r9)
+
+0x0032: 0x4399 mov.w #1, 25(r9)                         cycles: 4
+0x0034: 0x0019
+
+mov #1, 34(r9)
+
+0x0036: 0x4399 mov.w #1, 34(r9)                         cycles: 4
+0x0038: 0x0022
+
+mov #1, 35(r9)
+
+0x003a: 0x4399 mov.w #1, 35(r9)                         cycles: 4
+0x003c: 0x0023
+
+mov #1, 39(r9)
+
+0x003e: 0x4399 mov.w #1, 39(r9)                         cycles: 4
+0x0040: 0x0027
+
+mov #1, 40(r9)
+
+0x0042: 0x4399 mov.w #1, 40(r9)                         cycles: 4
+0x0044: 0x0028
+
+mov #1, 60(r9)
+
+0x0046: 0x4399 mov.w #1, 60(r9)                         cycles: 4
+0x0048: 0x003c
+
+mov #1, 61(r9)
+
+0x004a: 0x4399 mov.w #1, 61(r9)                         cycles: 4
+0x004c: 0x003d
+
+mov #1, 62(r9)
+
+0x004e: 0x4399 mov.w #1, 62(r9)                         cycles: 4
+0x0050: 0x003e
+
+mov #1, 65(r9)
+
+0x0052: 0x4399 mov.w #1, 65(r9)                         cycles: 4
+0x0054: 0x0041
+
+mov #1, 66(r9)
+
+0x0056: 0x4399 mov.w #1, 66(r9)                         cycles: 4
+0x0058: 0x0042
+
+mov #1, 68(r9)
+
+0x005a: 0x4399 mov.w #1, 68(r9)                         cycles: 4
+0x005c: 0x0044
+
+mov #1, 69(r9)
+
+0x005e: 0x4399 mov.w #1, 69(r9)                         cycles: 4
+0x0060: 0x0045
+
+mov #1, 72(r9)
+
+0x0062: 0x4399 mov.w #1, 72(r9)                         cycles: 4
+0x0064: 0x0048
+
+mov #1, 73(r9)
+
+0x0066: 0x4399 mov.w #1, 73(r9)                         cycles: 4
+0x0068: 0x0049
+
+mov #1, 74(r9)
+
+0x006a: 0x4399 mov.w #1, 74(r9)                         cycles: 4
+0x006c: 0x004a
+
+mov #1, 77(r9)
+
+0x006e: 0x4399 mov.w #1, 77(r9)                         cycles: 4
+0x0070: 0x004d
+
+mov #1, 79(r9)
+
+0x0072: 0x4399 mov.w #1, 79(r9)                         cycles: 4
+0x0074: 0x004f
+
+mov #1, 81(r9)
+
+0x0076: 0x4399 mov.w #1, 81(r9)                         cycles: 4
+0x0078: 0x0051
+
+mov #1, 83(r9)
+
+0x007a: 0x4399 mov.w #1, 83(r9)                         cycles: 4
+0x007c: 0x0053
+
+mov #1, 85(r9)
+
+0x007e: 0x4399 mov.w #1, 85(r9)                         cycles: 4
+0x0080: 0x0055
+
+mov #1, 87(r9)
+
+0x0082: 0x4399 mov.w #1, 87(r9)                         cycles: 4
+0x0084: 0x0057
+
+mov #1, 94(r9)
+
+0x0086: 0x4399 mov.w #1, 94(r9)                         cycles: 4
+0x0088: 0x005e
+
+mov #1, 95(r9)
+
+0x008a: 0x4399 mov.w #1, 95(r9)                         cycles: 4
+0x008c: 0x005f
+
+mov #1, 99(r9)
+
+0x008e: 0x4399 mov.w #1, 99(r9)                         cycles: 4
+0x0090: 0x0063
+
+mov #1, 100(r9)
+
+0x0092: 0x4399 mov.w #1, 100(r9)                        cycles: 4
+0x0094: 0x0064
+
+mov #1, 124(r9)
+
+0x0096: 0x4399 mov.w #1, 124(r9)                        cycles: 4
+0x0098: 0x007c
+
+mov #1, 125(r9)
+
+0x009a: 0x4399 mov.w #1, 125(r9)                        cycles: 4
+0x009c: 0x007d
+
+mov #1, 129(r9)
+
+0x009e: 0x4399 mov.w #1, 129(r9)                        cycles: 4
+0x00a0: 0x0081
+
+mov #1, 130(r9)
+
+0x00a2: 0x4399 mov.w #1, 130(r9)                        cycles: 4
+0x00a4: 0x0082
+
+mov #1, 137(r9)
+
+0x00a6: 0x4399 mov.w #1, 137(r9)                        cycles: 4
+0x00a8: 0x0089
+
+mov #1, 139(r9)
+
+0x00aa: 0x4399 mov.w #1, 139(r9)                        cycles: 4
+0x00ac: 0x008b
+
+mov #1, 141(r9)
+
+0x00ae: 0x4399 mov.w #1, 141(r9)                        cycles: 4
+0x00b0: 0x008d
+
+mov #1, 143(r9)
+
+0x00b2: 0x4399 mov.w #1, 143(r9)                        cycles: 4
+0x00b4: 0x008f
+
+mov #1, 145(r9)
+
+0x00b6: 0x4399 mov.w #1, 145(r9)                        cycles: 4
+0x00b8: 0x0091
+
+mov #1, 147(r9)
+
+0x00ba: 0x4399 mov.w #1, 147(r9)                        cycles: 4
+0x00bc: 0x0093
+
+mov #1, 150(r9)
+
+0x00be: 0x4399 mov.w #1, 150(r9)                        cycles: 4
+0x00c0: 0x0096
+
+mov #1, 151(r9)
+
+0x00c2: 0x4399 mov.w #1, 151(r9)                        cycles: 4
+0x00c4: 0x0097
+
+mov #1, 152(r9)
+
+0x00c6: 0x4399 mov.w #1, 152(r9)                        cycles: 4
+0x00c8: 0x0098
+
+mov #1, 155(r9)
+
+0x00ca: 0x4399 mov.w #1, 155(r9)                        cycles: 4
+0x00cc: 0x009b
+
+mov #1, 156(r9)
+
+0x00ce: 0x4399 mov.w #1, 156(r9)                        cycles: 4
+0x00d0: 0x009c
+
+mov #1, 158(r9)
+
+0x00d2: 0x4399 mov.w #1, 158(r9)                        cycles: 4
+0x00d4: 0x009e
+
+mov #1, 159(r9)
+
+0x00d6: 0x4399 mov.w #1, 159(r9)                        cycles: 4
+0x00d8: 0x009f
+
+mov #1, 162(r9)
+
+0x00da: 0x4399 mov.w #1, 162(r9)                        cycles: 4
+0x00dc: 0x00a2
+
+mov #1, 163(r9)
+
+0x00de: 0x4399 mov.w #1, 163(r9)                        cycles: 4
+0x00e0: 0x00a3
+
+mov #1, 164(r9)
+
+0x00e2: 0x4399 mov.w #1, 164(r9)                        cycles: 4
+0x00e4: 0x00a4
+
+mov #1, 184(r9)
+
+0x00e6: 0x4399 mov.w #1, 184(r9)                        cycles: 4
+0x00e8: 0x00b8
+
+mov #1, 185(r9)
+
+0x00ea: 0x4399 mov.w #1, 185(r9)                        cycles: 4
+0x00ec: 0x00b9
+
+mov #1, 189(r9)
+
+0x00ee: 0x4399 mov.w #1, 189(r9)                        cycles: 4
+0x00f0: 0x00bd
+
+mov #1, 190(r9)
+
+0x00f2: 0x4399 mov.w #1, 190(r9)                        cycles: 4
+0x00f4: 0x00be
+
+mov #1, 199(r9)
+
+0x00f6: 0x4399 mov.w #1, 199(r9)                        cycles: 4
+0x00f8: 0x00c7
+
+mov #1, 205(r9)
+
+0x00fa: 0x4399 mov.w #1, 205(r9)                        cycles: 4
+0x00fc: 0x00cd
+
+mov #1, 214(r9)
+
+0x00fe: 0x4399 mov.w #1, 214(r9)                        cycles: 4
+0x0100: 0x00d6
+
+mov #1, 220(r9)
+
+0x0102: 0x4399 mov.w #1, 220(r9)                        cycles: 4
+0x0104: 0x00dc
+
+ret
+
+0x0106: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+loop:
+
+cmp #5, r7    ; 5 generations
+
+0x0108: 0x9037 cmp.w #0x0005, r7                        cycles: 2
+0x010a: 0x0005
+
+jz done
+
+0x010c: 0x2481 jeq 0x0210  (offset: 258)                cycles: 2
+
+jmp game
+
+0x010e: 0x3c00 jmp 0x0110  (offset: 0)                  cycles: 2
+
+
+game:
+
+CMP #15, r10  ; 15 rows
+
+0x0110: 0x903a cmp.w #0x000f, r10                       cycles: 2
+0x0112: 0x000f
+
+jz repeat
+
+0x0114: 0x240e jeq 0x0132  (offset: 28)                 cycles: 2
+
+cmp #15, r6   ; 15 column
+
+0x0116: 0x9036 cmp.w #0x000f, r6                        cycles: 2
+0x0118: 0x000f
+
+jz nextRow
+
+0x011a: 0x2407 jeq 0x012a  (offset: 14)                 cycles: 2
+
+mov r9, r11   ; move the cell address to r11
+
+0x011c: 0x490b mov.w r9, r11                            cycles: 1
+
+call &checkSurround  
+
+0x011e: 0x1292 call &0x014a                             cycles: 5
+0x0120: 0x014a
+
+add #1, r9    ; increment cell address
+
+0x0122: 0x5319 add.w #1, r9                             cycles: 1
+
+add #1, r6    ; increment column
+
+0x0124: 0x5316 add.w #1, r6                             cycles: 1
+
+mov #0, r12
+
+0x0126: 0x430c mov.w #0, r12                            cycles: 1
+
+jmp game
+
+0x0128: 0x3ff3 jmp 0x0110  (offset: -26)                cycles: 2
+
+
+nextRow:
+mov #0, r6        ; reset the column
+
+0x012a: 0x4306 mov.w #0, r6                             cycles: 1
+
+add #1, r10       ; increment row
+
+0x012c: 0x531a add.w #1, r10                            cycles: 1
+
+br #0011Ch        ; needs to change
+
+0x012e: 0x4030 mov.w #0x011c, PC                        cycles: 3
+0x0130: 0x011c
+
+
+repeat:
+mov #display, r9  ; move cell pointer to start of array
+
+0x0132: 0x4039 mov.w #0x0500, r9                        cycles: 2
+0x0134: 0x0500
+
+call &temp
+
+0x0136: 0x1292 call &0x01e6                             cycles: 5
+0x0138: 0x01e6
+
+call &refresh     ; print the generation
+
+0x013a: 0x1292 call &0x0400                             cycles: 5
+0x013c: 0x0400
+
+mov #display, r9  ; move cell pointer to start of array
+
+0x013e: 0x4039 mov.w #0x0500, r9                        cycles: 2
+0x0140: 0x0500
+
+mov #0, r10       ; reset row counter
+
+0x0142: 0x430a mov.w #0, r10                            cycles: 1
+
+mov #0, r6        ; reset column counter
+
+0x0144: 0x4306 mov.w #0, r6                             cycles: 1
+
+add #1, r7        ; increment generation
+
+0x0146: 0x5317 add.w #1, r7                             cycles: 1
+
+jmp loop
+
+0x0148: 0x3fdf jmp 0x0108  (offset: -66)                cycles: 2
+
+
+checkSurround:
+
+call &checkLeft   
+
+0x014a: 0x1292 call &0x0164                             cycles: 5
+0x014c: 0x0164
+
+mov r9, r11        ; reset to center cell
+
+0x014e: 0x490b mov.w r9, r11                            cycles: 1
+
+call &checkRight
+
+0x0150: 0x1292 call &0x0182                             cycles: 5
+0x0152: 0x0182
+
+mov r9, r11
+
+0x0154: 0x490b mov.w r9, r11                            cycles: 1
+
+call &checkTop
+
+0x0156: 0x1292 call &0x01a2                             cycles: 5
+0x0158: 0x01a2
+
+call &checkBottom
+
+0x015a: 0x1292 call &0x01b4                             cycles: 5
+0x015c: 0x01b4
+
+CMP @r9, r5
+
+0x015e: 0x9925 cmp.w @r9, r5                            cycles: 2
+
+jz LiveToDead
+
+0x0160: 0x2433 jeq 0x01c8  (offset: 102)                cycles: 2
+
+JMP DeadToLive
+
+0x0162: 0x3c3a jmp 0x01d8  (offset: 116)                cycles: 2
+
+
+checkLeft:
+
+CMP #0, r6                ;column is zero no left cells
+
+0x0164: 0x9306 cmp.w #0, r6                             cycles: 1
+
+jz finish
+
+0x0166: 0x2453 jeq 0x020e  (offset: 166)                cycles: 2
+
+sub #16, r11              ;top left
+
+0x0168: 0x803b sub.w #0x0010, r11                       cycles: 2
+0x016a: 0x0010
+
+call &TopDiagonalCheck
+
+0x016c: 0x1292 call &0x0200                             cycles: 5
+0x016e: 0x0200
+
+add #15, r11              ; left
+
+0x0170: 0x503b add.w #0x000f, r11                       cycles: 2
+0x0172: 0x000f
+
+call &check
+
+0x0174: 0x1292 call &0x01fa                             cycles: 5
+0x0176: 0x01fa
+
+add #15, r11               ; bottom left
+
+0x0178: 0x503b add.w #0x000f, r11                       cycles: 2
+0x017a: 0x000f
+
+call &BottomDiagonalCheck
+
+0x017c: 0x1292 call &0x0206                             cycles: 5
+0x017e: 0x0206
+
+ret
+
+0x0180: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+checkRight:
+
+CMP #14, r6               ;column is 14 no right cells
+
+0x0182: 0x9036 cmp.w #0x000e, r6                        cycles: 2
+0x0184: 0x000e
+
+jz finish
+
+0x0186: 0x2443 jeq 0x020e  (offset: 134)                cycles: 2
+
+sub #14, r11              ;top right
+
+0x0188: 0x803b sub.w #0x000e, r11                       cycles: 2
+0x018a: 0x000e
+
+call &TopDiagonalCheck
+
+0x018c: 0x1292 call &0x0200                             cycles: 5
+0x018e: 0x0200
+
+add #15, r11              ; right
+
+0x0190: 0x503b add.w #0x000f, r11                       cycles: 2
+0x0192: 0x000f
+
+call &check
+
+0x0194: 0x1292 call &0x01fa                             cycles: 5
+0x0196: 0x01fa
+
+add #15, r11              ; bottom right
+
+0x0198: 0x503b add.w #0x000f, r11                       cycles: 2
+0x019a: 0x000f
+
+call &BottomDiagonalCheck
+
+0x019c: 0x1292 call &0x0206                             cycles: 5
+0x019e: 0x0206
+
+ret
+
+0x01a0: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+checkTop:
+
+CMP #0, r10         ;row is 0 no top cell
+
+0x01a2: 0x930a cmp.w #0, r10                            cycles: 1
+
+jz finish
+
+0x01a4: 0x2434 jeq 0x020e  (offset: 104)                cycles: 2
+
+sub #15, r11        ; top
+
+0x01a6: 0x803b sub.w #0x000f, r11                       cycles: 2
+0x01a8: 0x000f
+
+call &check
+
+0x01aa: 0x1292 call &0x01fa                             cycles: 5
+0x01ac: 0x01fa
+
+add #15, r11
+
+0x01ae: 0x503b add.w #0x000f, r11                       cycles: 2
+0x01b0: 0x000f
+
+ret
+
+0x01b2: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+checkBottom:
+
+CMP #14, r10     ;row is 14 no top cell
+
+0x01b4: 0x903a cmp.w #0x000e, r10                       cycles: 2
+0x01b6: 0x000e
+
+jz finish
+
+0x01b8: 0x242a jeq 0x020e  (offset: 84)                 cycles: 2
+
+add #15, r11     ;bottom
+
+0x01ba: 0x503b add.w #0x000f, r11                       cycles: 2
+0x01bc: 0x000f
+
+call &check
+
+0x01be: 0x1292 call &0x01fa                             cycles: 5
+0x01c0: 0x01fa
+
+sub #15,r11
+
+0x01c2: 0x803b sub.w #0x000f, r11                       cycles: 2
+0x01c4: 0x000f
+
+ret
+
+0x01c6: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+LiveToDead:
+CMP #2, r12     ; if there is less than 2 surronding cells
+
+0x01c8: 0x932c cmp.w #2, r12                            cycles: 1
+
+jl kill
+
+0x01ca: 0x3803 jl 0x01d2  (offset: 6)                   cycles: 2
+
+CMP #4, r12     ; if there is 4 or more surronding cells
+
+0x01cc: 0x922c cmp.w #4, r12                            cycles: 1
+
+jge kill
+
+0x01ce: 0x3401 jge 0x01d2  (offset: 2)                  cycles: 2
+
+ret
+
+0x01d0: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+kill:
+mov #0, 256(r9)  ; kill a cell in the copy
+
+0x01d2: 0x4389 mov.w #0, 256(r9)                        cycles: 4
+0x01d4: 0x0100
+
+ret
+
+0x01d6: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+DeadToLive: 
+CMP #3, r12    ; if there is 3 surronding cells
+
+0x01d8: 0x903c cmp.w #0x0003, r12                       cycles: 2
+0x01da: 0x0003
+
+jz Birth
+
+0x01dc: 0x2401 jeq 0x01e0  (offset: 2)                  cycles: 2
+
+ret
+
+0x01de: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+Birth:
+mov #1, 256(r9)  ; birth a cell in the copy
+
+0x01e0: 0x4399 mov.w #1, 256(r9)                        cycles: 4
+0x01e2: 0x0100
+
+ret
+
+0x01e4: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+temp:
+cmp #005E1h, r9    ;move the copy board to the display area
+
+0x01e6: 0x9039 cmp.w #0x05e1, r9                        cycles: 2
+0x01e8: 0x05e1
+
+jz finish
+
+0x01ea: 0x2411 jeq 0x020e  (offset: 34)                 cycles: 2
+
+mov 256(r9), 0(r9)
+
+0x01ec: 0x4999 mov.w 256(r9), 0(r9)                     cycles: 6
+0x01ee: 0x0100
+0x01f0: 0x0000
+
+add #1, r9
+
+0x01f2: 0x5319 add.w #1, r9                             cycles: 1
+
+jmp temp
+
+0x01f4: 0x3ff8 jmp 0x01e6  (offset: -16)                cycles: 2
+
+
+isAlive:         ; count the number of alive cells in the surrounding
+add #1, r12
+
+0x01f6: 0x531c add.w #1, r12                            cycles: 1
+
+ret
+
+0x01f8: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+check:
+
+CMP @r11, r5     ;compare contents of cell with 1
+
+0x01fa: 0x9b25 cmp.w @r11, r5                           cycles: 2
+
+jz isAlive
+
+0x01fc: 0x27fc jeq 0x01f6  (offset: -8)                 cycles: 2
+
+ret
+
+0x01fe: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+TopDiagonalCheck:
+
+CMP #1, r10         ; if row is 0 no top diagonal cell
+
+0x0200: 0x931a cmp.w #1, r10                            cycles: 1
+
+jge check
+
+0x0202: 0x37fb jge 0x01fa  (offset: -10)                cycles: 2
+
+ret
+
+0x0204: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+BottomDiagonalCheck:
+
+CMP #14, r10        ; if row is 14 no bottom diagonal cell
+
+0x0206: 0x903a cmp.w #0x000e, r10                       cycles: 2
+0x0208: 0x000e
+
+jl check
+
+0x020a: 0x3bf7 jl 0x01fa  (offset: -18)                 cycles: 2
+
+ret
+
+0x020c: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+finish:
+ret
+
+0x020e: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+done:
+BIS #00010h,SR
+
+0x0210: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x0212: 0x0010
+
+
+.org 00400h
+refresh:
+ret
+
+0x0400: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+.end
+data sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                          init 00000000 0
+                     initArray 00000026 0
+                          loop 00000108 0
+                          game 00000110 0
+                       nextRow 0000012a 0
+                        repeat 00000132 0
+                 checkSurround 0000014a 0
+                     checkLeft 00000164 0
+                    checkRight 00000182 0
+                      checkTop 000001a2 0
+                   checkBottom 000001b4 0
+                    LiveToDead 000001c8 0
+                          kill 000001d2 0
+                    DeadToLive 000001d8 0
+                         Birth 000001e0 0
+                          temp 000001e6 0
+                       isAlive 000001f6 0
+                         check 000001fa 0
+              TopDiagonalCheck 00000200 0
+           BottomDiagonalCheck 00000206 0
+                        finish 0000020e 0
+                          done 00000210 0
+                       refresh 00000400 0
+ -> Total symbols: 23
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 164
+   Code Bytes: 534
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0401 (1025)
+

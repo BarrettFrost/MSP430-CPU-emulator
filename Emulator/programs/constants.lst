@@ -1,0 +1,48 @@
+.include "msp430x2xx.inc"
+
+mov #0,r4
+
+0x0000: 0x4304 mov.w #0, r4                             cycles: 1
+
+mov #4,r5
+
+0x0002: 0x4225 mov.w #4, r5                             cycles: 1
+
+mov #8,r6
+
+0x0004: 0x4236 mov.w #8, r6                             cycles: 1
+
+mov #1, r7
+
+0x0006: 0x4317 mov.w #1, r7                             cycles: 1
+
+mov #2, r8
+
+0x0008: 0x4328 mov.w #2, r8                             cycles: 1
+
+mov #-1, r9
+
+0x000a: 0x4339 mov.w #-1, r9                            cycles: 1
+
+BIS #00010h,SR
+
+0x000c: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x000e: 0x0010
+
+.enddata sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+ -> Total symbols: 0
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 7
+   Code Bytes: 16
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 000f (15)
+

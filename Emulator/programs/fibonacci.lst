@@ -1,0 +1,98 @@
+; gets the 12th fibonacci numbers
+
+init:
+
+mov #10, r4     ; which fibonacci number 10 + 2 = 12
+
+0x0000: 0x4034 mov.w #0x000a, r4                        cycles: 2
+0x0002: 0x000a
+
+mov #00050h, r5  ; first number
+
+0x0004: 0x4035 mov.w #0x0050, r5                        cycles: 2
+0x0006: 0x0050
+
+mov #00051h, r6  ; second number
+
+0x0008: 0x4036 mov.w #0x0051, r6                        cycles: 2
+0x000a: 0x0051
+
+mov #1, 0(r6)     ; second fibonacci number    
+
+0x000c: 0x4396 mov.w #1, 0(r6)                          cycles: 4
+0x000e: 0x0000
+
+jmp loop
+
+0x0010: 0x3c00 jmp 0x0012  (offset: 0)                  cycles: 2
+
+
+loop:
+mov @r6, r7       
+
+0x0012: 0x4627 mov.w @r6, r7                            cycles: 2
+
+add.b @r5+, 0(r6)   ; add the 2 numbers
+
+0x0014: 0x55f6 add.b @r5+, 0(r6)                        cycles: 5
+0x0016: 0x0000
+
+mov 0(r6), 1(r6)    ; move number into the sequence
+
+0x0018: 0x4696 mov.w 0(r6), 1(r6)                       cycles: 6
+0x001a: 0x0000
+0x001c: 0x0001
+
+mov r7, 0(r6);      
+
+0x001e: 0x4786 mov.w r7, 0(r6)                          cycles: 4
+0x0020: 0x0000
+
+add #1, r6          ; increment the address
+
+0x0022: 0x5316 add.w #1, r6                             cycles: 1
+
+sub #1, r4
+
+0x0024: 0x8314 sub.w #1, r4                             cycles: 1
+
+jz print
+
+0x0026: 0x2401 jeq 0x002a  (offset: 2)                  cycles: 2
+
+jmp loop
+
+0x0028: 0x3ff4 jmp 0x0012  (offset: -24)                cycles: 2
+
+print:
+mov 0(r6), r8    ; the 12th fibonacci number
+
+0x002a: 0x4618 mov.w 0(r6), r8                          cycles: 3
+0x002c: 0x0000
+
+BIS #00010h, SR
+
+0x002e: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x0030: 0x0010
+
+
+.enddata sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                          init 00000000 0
+                          loop 00000012 0
+                         print 0000002a 0
+ -> Total symbols: 3
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 15
+   Code Bytes: 50
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0031 (49)
+

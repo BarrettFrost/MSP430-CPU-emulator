@@ -1,0 +1,83 @@
+.include "msp430x2xx.inc"
+
+start:
+mov #00300h, r1
+
+0x0000: 0x4031 mov.w #0x0300, SP                        cycles: 2
+0x0002: 0x0300
+
+push #8
+
+0x0004: 0x1232 push.w #8                                cycles: 3
+
+pop  r4
+
+0x0006: 0x4134 pop.w r4   --  mov.w @SP+, r4            cycles: 2
+
+call &called
+
+0x0008: 0x1292 call &0x0020                             cycles: 5
+0x000a: 0x0020
+
+setc
+
+0x000c: 0xd312 setc  --  bis.w #1, SR                   cycles: 1
+
+mov #2, r5
+
+0x000e: 0x4325 mov.w #2, r5                             cycles: 1
+
+rlc r5
+
+0x0010: 0x6505 addc.w r5, r5                            cycles: 1
+
+setn
+
+0x0012: 0xd222 setn  --  bis.w #4, SR                   cycles: 1
+
+setz
+
+0x0014: 0xd322 setz  --  bis.w #2, SR                   cycles: 1
+
+tst r7
+
+0x0016: 0x9307 cmp.w #0, r7                             cycles: 1
+
+mov #4, r6
+
+0x0018: 0x4226 mov.w #4, r6                             cycles: 1
+
+sbc r6
+
+0x001a: 0x7306 subc.w #0, r6                            cycles: 1
+
+BIS #00010h,SR
+
+0x001c: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x001e: 0x0010
+
+called:
+ret 
+
+0x0020: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+end.data sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                         start 00000000 0
+                        called 00000020 0
+ -> Total symbols: 2
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 14
+   Code Bytes: 34
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0021 (33)
+

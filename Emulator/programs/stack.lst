@@ -1,0 +1,136 @@
+			mov.w	#0xffff,r6
+
+0x0000: 0x4336 mov.w #-1, r6                            cycles: 1
+
+			mov.w	#0x000f,r7
+
+0x0002: 0x4037 mov.w #0x000f, r7                        cycles: 2
+0x0004: 0x000f
+
+loop1:		
+                        push	r6
+
+0x0006: 0x1206 push.w r6                                cycles: 3
+
+			dec		r7
+
+0x0008: 0x8317 sub.w #1, r7                             cycles: 1
+
+			jnz		loop1
+
+0x000a: 0x23fd jne 0x0006  (offset: -6)                 cycles: 2
+
+
+			mov.w	#0x000f,r7
+
+0x000c: 0x4037 mov.w #0x000f, r7                        cycles: 2
+0x000e: 0x000f
+
+loop2:
+            		pop		r6
+
+0x0010: 0x4136 pop.w r6   --  mov.w @SP+, r6            cycles: 2
+
+			dec		r7
+
+0x0012: 0x8317 sub.w #1, r7                             cycles: 1
+
+			jnz		loop2
+
+0x0014: 0x23fd jne 0x0010  (offset: -6)                 cycles: 2
+
+
+			mov.w	#0x0004,r4
+
+0x0016: 0x4224 mov.w #4, r4                             cycles: 1
+
+			mov.w	#0x0005,r5
+
+0x0018: 0x4035 mov.w #0x0005, r5                        cycles: 2
+0x001a: 0x0005
+
+			mov.b	#0x06,r6
+
+0x001c: 0x4076 mov.b #0x06, r6                          cycles: 2
+0x001e: 0x0006
+
+			call	&subroutine1
+
+0x0020: 0x1292 call &0x002c                             cycles: 5
+0x0022: 0x002c
+
+			mov.w	r4,&0x43f2
+
+0x0024: 0x4482 mov.w r4, &0x43f2                        cycles: 4
+0x0026: 0x43f2
+
+			BIS #00010h, r2
+
+0x0028: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x002a: 0x0010
+
+
+subroutine1:
+                   	push.w	r4
+
+0x002c: 0x1204 push.w r4                                cycles: 3
+
+			push.w	r5
+
+0x002e: 0x1205 push.w r5                                cycles: 3
+
+			push.b	r6
+
+0x0030: 0x1246 push.b r6                                cycles: 3
+
+			mov.w	#0x4444,r4
+
+0x0032: 0x4034 mov.w #0x4444, r4                        cycles: 2
+0x0034: 0x4444
+
+			mov.w	#0x5555,r5
+
+0x0036: 0x4035 mov.w #0x5555, r5                        cycles: 2
+0x0038: 0x5555
+
+			mov.w	#0x6666,r6
+
+0x003a: 0x4036 mov.w #0x6666, r6                        cycles: 2
+0x003c: 0x6666
+
+			pop.b	r6
+
+0x003e: 0x4176 pop.b r6   --  mov.b @SP+, r6            cycles: 2
+
+			pop.w	r5
+
+0x0040: 0x4135 pop.w r5   --  mov.w @SP+, r5            cycles: 2
+
+			pop.w	r4
+
+0x0042: 0x4134 pop.w r4   --  mov.w @SP+, r4            cycles: 2
+
+			ret
+
+0x0044: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+.enddata sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                         loop1 00000006 0
+                         loop2 00000010 0
+                   subroutine1 0000002c 0
+ -> Total symbols: 3
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 25
+   Code Bytes: 70
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0045 (69)
+

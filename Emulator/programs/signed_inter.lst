@@ -1,0 +1,543 @@
+.define X 00300h    ; address for x values
+.define Y 00310h    ; address for y values
+.define coord 4     ; amount of coordinates
+.define register 00700h
+.define index 001000h   ;store index
+.define signN 00800h    ; sign of numerator
+.define signD 00801h    ; sign of denominator
+; signed newton interpolation
+; 2s complement with 8 bit fixed point representation
+init:
+
+mov #X, r4
+
+0x0000: 0x4034 mov.w #0x0300, r4                        cycles: 2
+0x0002: 0x0300
+
+mov #00300h, 0(r4)  ;3
+
+0x0004: 0x40b4 mov.w #0x0300, 0(r4)                     cycles: 5
+0x0006: 0x0300
+0x0008: 0x0000
+
+mov #00400h, 1(r4)  ;4
+
+0x000a: 0x40b4 mov.w #0x0400, 1(r4)                     cycles: 5
+0x000c: 0x0400
+0x000e: 0x0001
+
+mov #00500h, 2(r4)  ;5
+
+0x0010: 0x40b4 mov.w #0x0500, 2(r4)                     cycles: 5
+0x0012: 0x0500
+0x0014: 0x0002
+
+mov #00700h, 3(r4)  ;7
+
+0x0016: 0x40b4 mov.w #0x0700, 3(r4)                     cycles: 5
+0x0018: 0x0700
+0x001a: 0x0003
+
+mov #Y, r4
+
+0x001c: 0x4034 mov.w #0x0310, r4                        cycles: 2
+0x001e: 0x0310
+
+mov #0FE00h, 0(r4)  ;-2
+
+0x0020: 0x40b4 mov.w #0xfe00, 0(r4)                     cycles: 5
+0x0022: 0xfe00
+0x0024: 0x0000
+
+mov #00A00h, 1(r4)  ;10
+
+0x0026: 0x40b4 mov.w #0x0a00, 1(r4)                     cycles: 5
+0x0028: 0x0a00
+0x002a: 0x0001
+
+mov #01000h, 2(r4)  ;16
+
+0x002c: 0x40b4 mov.w #0x1000, 2(r4)                     cycles: 5
+0x002e: 0x1000
+0x0030: 0x0002
+
+mov #02200h, 3(r4)  ;34
+
+0x0032: 0x40b4 mov.w #0x2200, 3(r4)                     cycles: 5
+0x0034: 0x2200
+0x0036: 0x0003
+
+mov #1, r14
+
+0x0038: 0x431e mov.w #1, r14                            cycles: 1
+
+mov #X, r4
+
+0x003a: 0x4034 mov.w #0x0300, r4                        cycles: 2
+0x003c: 0x0300
+
+mov #Y, r5
+
+0x003e: 0x4035 mov.w #0x0310, r5                        cycles: 2
+0x0040: 0x0310
+
+mov #1, r11
+
+0x0042: 0x431b mov.w #1, r11                            cycles: 1
+
+mov r5, r15
+
+0x0044: 0x450f mov.w r5, r15                            cycles: 1
+
+add #coord, r15
+
+0x0046: 0x522f add.w #4, r15                            cycles: 1
+
+mov #1, &index
+
+0x0048: 0x4392 mov.w #1, &0x1000                        cycles: 4
+0x004a: 0x1000
+
+jmp main
+
+0x004c: 0x3c00 jmp 0x004e  (offset: 0)                  cycles: 2
+
+
+main:
+
+cmp #coord, r11  ; number of loops 
+
+0x004e: 0x922b cmp.w #4, r11                            cycles: 1
+
+jz finish
+
+0x0050: 0x2465 jeq 0x011c  (offset: 202)                cycles: 2
+
+add #1, r11
+
+0x0052: 0x531b add.w #1, r11                            cycles: 1
+
+call &loop
+
+0x0054: 0x1292 call &0x0068                             cycles: 5
+0x0056: 0x0068
+
+mov #X, r4       ; reset the address to beginning of X coordinates
+
+0x0058: 0x4034 mov.w #0x0300, r4                        cycles: 2
+0x005a: 0x0300
+
+add #1, r5       ; reset the address to beginning of X coordinates
+
+0x005c: 0x5315 add.w #1, r5                             cycles: 1
+
+add #1, &index
+
+0x005e: 0x5392 add.w #1, &0x1000                        cycles: 4
+0x0060: 0x1000
+
+mov &index, r14
+
+0x0062: 0x421e mov.w &0x1000, r14                       cycles: 3
+0x0064: 0x1000
+
+jmp main
+
+0x0066: 0x3ff3 jmp 0x004e  (offset: -26)                cycles: 2
+
+
+
+loop:
+cmp #coord, r14
+
+0x0068: 0x922e cmp.w #4, r14                            cycles: 1
+
+jz done
+
+0x006a: 0x2463 jeq 0x0132  (offset: 198)                cycles: 2
+
+mov 1(r5), r6    ; load y coordinate 
+
+0x006c: 0x4516 mov.w 1(r5), r6                          cycles: 3
+0x006e: 0x0001
+
+mov @r5, r7      ; load other y coordinate
+
+0x0070: 0x4527 mov.w @r5, r7                            cycles: 2
+
+mov &index, r13
+
+0x0072: 0x421d mov.w &0x1000, r13                       cycles: 3
+0x0074: 0x1000
+
+add r4, r13
+
+0x0076: 0x540d add.w r4, r13                            cycles: 1
+
+mov @r13, r8     ; load x coordinate
+
+0x0078: 0x4d28 mov.w @r13, r8                           cycles: 2
+
+mov @r4, r9      ; load other x coordinate
+
+0x007a: 0x4429 mov.w @r4, r9                            cycles: 2
+
+sub r7, r6       ;y - y
+
+0x007c: 0x8706 sub.w r7, r6                             cycles: 1
+
+sub r9, r8       ;x - x
+
+0x007e: 0x8908 sub.w r9, r8                             cycles: 1
+
+
+mov #8000h, &signN
+
+0x0080: 0x40b2 mov.w #0x8000, &0x0800                   cycles: 5
+0x0082: 0x8000
+0x0084: 0x0800
+
+and r6, &signN
+
+0x0086: 0xf682 and.w r6, &0x0800                        cycles: 4
+0x0088: 0x0800
+
+mov #8000h, &signD
+
+0x008a: 0x40b2 mov.w #0x8000, &0x0801                   cycles: 5
+0x008c: 0x8000
+0x008e: 0x0801
+
+and r8, &signD
+
+0x0090: 0xf882 and.w r8, &0x0801                        cycles: 4
+0x0092: 0x0801
+
+call &flip
+
+0x0094: 0x1292 call &0x00b2                             cycles: 5
+0x0096: 0x00b2
+
+INV r8
+
+0x0098: 0xe338 xor.w #-1, r8                            cycles: 1
+
+add #1, r8
+
+0x009a: 0x5318 add.w #1, r8                             cycles: 1
+
+
+call &div
+
+0x009c: 0x1292 call &0x00d8                             cycles: 5
+0x009e: 0x00d8
+
+call &fraction
+
+0x00a0: 0x1292 call &0x00fe                             cycles: 5
+0x00a2: 0x00fe
+
+add #1, r14        ; add one to the index
+
+0x00a4: 0x531e add.w #1, r14                            cycles: 1
+
+add #1, r4         ; increment address
+
+0x00a6: 0x5314 add.w #1, r4                             cycles: 1
+
+add #1, r5         ; increment address
+
+0x00a8: 0x5315 add.w #1, r5                             cycles: 1
+
+mov r12, 0(r15)     ; store result 
+
+0x00aa: 0x4c8f mov.w r12, 0(r15)                        cycles: 4
+0x00ac: 0x0000
+
+add #1, r15         ; increment address
+
+0x00ae: 0x531f add.w #1, r15                            cycles: 1
+
+jmp loop
+
+0x00b0: 0x3fdb jmp 0x0068  (offset: -74)                cycles: 2
+
+
+flip:
+cmp #08000h, &signN   ; if negative turn number positive
+
+0x00b2: 0x90b2 cmp.w #0x8000, &0x0800                   cycles: 5
+0x00b4: 0x8000
+0x00b6: 0x0800
+
+jz flipNum
+
+0x00b8: 0x2405 jeq 0x00c4  (offset: 10)                 cycles: 2
+
+cmp #08000h, &signD   ; if negative turn number positive
+
+0x00ba: 0x90b2 cmp.w #0x8000, &0x0801                   cycles: 5
+0x00bc: 0x8000
+0x00be: 0x0801
+
+jz flipDenom
+
+0x00c0: 0x2408 jeq 0x00d2  (offset: 16)                 cycles: 2
+
+ret
+
+0x00c2: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+flipNum:
+
+INV r6                 ; Invert then add 1
+
+0x00c4: 0xe336 xor.w #-1, r6                            cycles: 1
+
+add #1, r6
+
+0x00c6: 0x5316 add.w #1, r6                             cycles: 1
+
+cmp #08000h, &signD
+
+0x00c8: 0x90b2 cmp.w #0x8000, &0x0801                   cycles: 5
+0x00ca: 0x8000
+0x00cc: 0x0801
+
+jz flipDenom
+
+0x00ce: 0x2401 jeq 0x00d2  (offset: 2)                  cycles: 2
+
+ret
+
+0x00d0: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+flipDenom:
+INV r8              ; Invert then add 1
+
+0x00d2: 0xe338 xor.w #-1, r8                            cycles: 1
+
+add #1, r8
+
+0x00d4: 0x5318 add.w #1, r8                             cycles: 1
+
+ret
+
+0x00d6: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+div:
+cmp &signD, &signN
+
+0x00d8: 0x9292 cmp.w &0x0801, &0x0800                   cycles: 6
+0x00da: 0x0801
+0x00dc: 0x0800
+
+jz posResult
+
+0x00de: 0x2408 jeq 0x00f0  (offset: 16)                 cycles: 2
+
+jmp negResult
+
+0x00e0: 0x3c00 jmp 0x00e2  (offset: 0)                  cycles: 2
+
+
+
+negResult:
+
+cmp #0, r6
+
+0x00e2: 0x9306 cmp.w #0, r6                             cycles: 1
+
+jl done 
+
+0x00e4: 0x3826 jl 0x0132  (offset: 76)                  cycles: 2
+
+cmp #0, r6
+
+0x00e6: 0x9306 cmp.w #0, r6                             cycles: 1
+
+jz done
+
+0x00e8: 0x2424 jeq 0x0132  (offset: 72)                 cycles: 2
+
+add r8, r6             ; add numurator and denom
+
+0x00ea: 0x5806 add.w r8, r6                             cycles: 1
+
+sub #1, r10            ; counts number denominators in numurator negative result
+
+0x00ec: 0x831a sub.w #1, r10                            cycles: 1
+
+jmp negResult
+
+0x00ee: 0x3ff9 jmp 0x00e2  (offset: -14)                cycles: 2
+
+
+posResult:
+
+cmp #0, r6
+
+0x00f0: 0x9306 cmp.w #0, r6                             cycles: 1
+
+jl done 
+
+0x00f2: 0x381f jl 0x0132  (offset: 62)                  cycles: 2
+
+cmp #0, r6
+
+0x00f4: 0x9306 cmp.w #0, r6                             cycles: 1
+
+jz done
+
+0x00f6: 0x241d jeq 0x0132  (offset: 58)                 cycles: 2
+
+add r8, r6              ; add numurator and denom
+
+0x00f8: 0x5806 add.w r8, r6                             cycles: 1
+
+add #1, r10             ; counts number denominators in numurator negative result
+
+0x00fa: 0x531a add.w #1, r10                            cycles: 1
+
+jmp posResult
+
+0x00fc: 0x3ff9 jmp 0x00f0  (offset: -14)                cycles: 2
+
+
+fraction:
+
+mov r10, r12   ; divide remainder by the denominator 
+
+0x00fe: 0x4a0c mov.w r10, r12                           cycles: 1
+
+mov #0, r10
+
+0x0100: 0x430a mov.w #0, r10                            cycles: 1
+
+call &div
+
+0x0102: 0x1292 call &0x00d8                             cycles: 5
+0x0104: 0x00d8
+
+mov #0, r13
+
+0x0106: 0x430d mov.w #0, r13                            cycles: 1
+
+call &shift    ; shift the right by eight the create the fraction
+
+0x0108: 0x1292 call &0x0110                             cycles: 5
+0x010a: 0x0110
+
+add r10, r12   ; add fraction to the result
+
+0x010c: 0x5a0c add.w r10, r12                           cycles: 1
+
+ret
+
+0x010e: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+shift:
+cmp #8, r13
+
+0x0110: 0x923d cmp.w #8, r13                            cycles: 1
+
+jz done
+
+0x0112: 0x240f jeq 0x0132  (offset: 30)                 cycles: 2
+
+add #1, r13
+
+0x0114: 0x531d add.w #1, r13                            cycles: 1
+
+clrc
+
+0x0116: 0xc312 clrc  --  bic.w #1, SR                   cycles: 1
+
+rlc r12
+
+0x0118: 0x6c0c addc.w r12, r12                          cycles: 1
+
+jmp shift
+
+0x011a: 0x3ffa jmp 0x0110  (offset: -12)                cycles: 2
+
+
+finish:
+mov #coord, r15      ;move results into registers
+
+0x011c: 0x422f mov.w #4, r15                            cycles: 1
+
+add #Y, r15
+
+0x011e: 0x503f add.w #0x0310, r15                       cycles: 2
+0x0120: 0x0310
+
+mov @r15, r4
+
+0x0122: 0x4f24 mov.w @r15, r4                           cycles: 2
+
+add #3, r15
+
+0x0124: 0x503f add.w #0x0003, r15                       cycles: 2
+0x0126: 0x0003
+
+mov @r15, r5
+
+0x0128: 0x4f25 mov.w @r15, r5                           cycles: 2
+
+add #2, r15
+
+0x012a: 0x532f add.w #2, r15                            cycles: 1
+
+mov @r15, r6
+
+0x012c: 0x4f26 mov.w @r15, r6                           cycles: 2
+
+BIS #00010h,SR
+
+0x012e: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x0130: 0x0010
+
+
+
+done:
+ret
+
+0x0132: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+
+data sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                          init 00000000 0
+                          main 0000004e 0
+                          loop 00000068 0
+                          flip 000000b2 0
+                       flipNum 000000c4 0
+                     flipDenom 000000d2 0
+                           div 000000d8 0
+                     negResult 000000e2 0
+                     posResult 000000f0 0
+                      fraction 000000fe 0
+                         shift 00000110 0
+                        finish 0000011c 0
+                          done 00000132 0
+ -> Total symbols: 13
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 104
+   Code Bytes: 308
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0133 (307)
+

@@ -1,0 +1,307 @@
+.define A  4
+.define B  2
+.define C -15
+.define D 3
+
+; signed division of integers
+
+main:
+mov #0, r8
+
+0x0000: 0x4308 mov.w #0, r8                             cycles: 1
+
+mov #A, r4
+
+0x0002: 0x4224 mov.w #4, r4                             cycles: 1
+
+mov #B, r5
+
+0x0004: 0x4325 mov.w #2, r5                             cycles: 1
+
+mov #8000h, r6   ; most significant bit is 1
+
+0x0006: 0x4036 mov.w #0x8000, r6                        cycles: 2
+0x0008: 0x8000
+
+and r4, r6
+
+0x000a: 0xf406 and.w r4, r6                             cycles: 1
+
+mov #8000h, r7
+
+0x000c: 0x4037 mov.w #0x8000, r7                        cycles: 2
+0x000e: 0x8000
+
+and r5, r7
+
+0x0010: 0xf507 and.w r5, r7                             cycles: 1
+
+mov #0, r10
+
+0x0012: 0x430a mov.w #0, r10                            cycles: 1
+
+call &flip      
+
+0x0014: 0x1292 call &0x004a                             cycles: 5
+0x0016: 0x004a
+
+INV r5
+
+0x0018: 0xe335 xor.w #-1, r5                            cycles: 1
+
+add #1, r5
+
+0x001a: 0x5315 add.w #1, r5                             cycles: 1
+
+call &div
+
+0x001c: 0x1292 call &0x006a                             cycles: 5
+0x001e: 0x006a
+
+mov r4, r11   
+
+0x0020: 0x440b mov.w r4, r11                            cycles: 1
+
+mov r8, r10    ; result in r10
+
+0x0022: 0x480a mov.w r8, r10                            cycles: 1
+
+
+mov #0, r8
+
+0x0024: 0x4308 mov.w #0, r8                             cycles: 1
+
+mov #C, r4
+
+0x0026: 0x4034 mov.w #0xfff1, r4                        cycles: 2
+0x0028: 0xfff1
+
+mov #D, r5
+
+0x002a: 0x4035 mov.w #0x0003, r5                        cycles: 2
+0x002c: 0x0003
+
+mov #8000h, r6
+
+0x002e: 0x4036 mov.w #0x8000, r6                        cycles: 2
+0x0030: 0x8000
+
+and r4, r6
+
+0x0032: 0xf406 and.w r4, r6                             cycles: 1
+
+mov #8000h, r7
+
+0x0034: 0x4037 mov.w #0x8000, r7                        cycles: 2
+0x0036: 0x8000
+
+and r5, r7
+
+0x0038: 0xf507 and.w r5, r7                             cycles: 1
+
+call &flip
+
+0x003a: 0x1292 call &0x004a                             cycles: 5
+0x003c: 0x004a
+
+INV r5
+
+0x003e: 0xe335 xor.w #-1, r5                            cycles: 1
+
+add #1, r5
+
+0x0040: 0x5315 add.w #1, r5                             cycles: 1
+
+call &div
+
+0x0042: 0x1292 call &0x006a                             cycles: 5
+0x0044: 0x006a
+
+mov r8, r11    ; result in r11
+
+0x0046: 0x480b mov.w r8, r11                            cycles: 1
+
+jmp finish
+
+0x0048: 0x3c22 jmp 0x008e  (offset: 68)                 cycles: 2
+
+
+flip:
+cmp #08000h, r6   ; if negative turn number positive
+
+0x004a: 0x9036 cmp.w #0x8000, r6                        cycles: 2
+0x004c: 0x8000
+
+jz flipNum
+
+0x004e: 0x2404 jeq 0x0058  (offset: 8)                  cycles: 2
+
+cmp #08000h, r7   ; if negative turn number positive
+
+0x0050: 0x9037 cmp.w #0x8000, r7                        cycles: 2
+0x0052: 0x8000
+
+jz flipDenom
+
+0x0054: 0x2407 jeq 0x0064  (offset: 14)                 cycles: 2
+
+ret
+
+0x0056: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+flipNum:
+
+INV r4           ; Invert then add 1
+
+0x0058: 0xe334 xor.w #-1, r4                            cycles: 1
+
+add #1, r4
+
+0x005a: 0x5314 add.w #1, r4                             cycles: 1
+
+cmp #08000h, r7
+
+0x005c: 0x9037 cmp.w #0x8000, r7                        cycles: 2
+0x005e: 0x8000
+
+jz flipDenom
+
+0x0060: 0x2401 jeq 0x0064  (offset: 2)                  cycles: 2
+
+ret
+
+0x0062: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+flipDenom:
+INV r5            ; Invert then add 1
+
+0x0064: 0xe335 xor.w #-1, r5                            cycles: 1
+
+add #1, r5
+
+0x0066: 0x5315 add.w #1, r5                             cycles: 1
+
+ret
+
+0x0068: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+div:
+cmp r6, r7
+
+0x006a: 0x9607 cmp.w r6, r7                             cycles: 1
+
+jz posResult
+
+0x006c: 0x2408 jeq 0x007e  (offset: 16)                 cycles: 2
+
+jmp negResult
+
+0x006e: 0x3c00 jmp 0x0070  (offset: 0)                  cycles: 2
+
+
+
+negResult:
+
+cmp #0, r4
+
+0x0070: 0x9304 cmp.w #0, r4                             cycles: 1
+
+jl done 
+
+0x0072: 0x380c jl 0x008c  (offset: 24)                  cycles: 2
+
+cmp #0, r4
+
+0x0074: 0x9304 cmp.w #0, r4                             cycles: 1
+
+jz done
+
+0x0076: 0x240a jeq 0x008c  (offset: 20)                 cycles: 2
+
+add r5, r4     ; add numurator and denom
+
+0x0078: 0x5504 add.w r5, r4                             cycles: 1
+
+sub #1, r8     ; counts number denominators in numurator negative result
+
+0x007a: 0x8318 sub.w #1, r8                             cycles: 1
+
+jmp negResult
+
+0x007c: 0x3ff9 jmp 0x0070  (offset: -14)                cycles: 2
+
+
+posResult:
+
+cmp #0, r4
+
+0x007e: 0x9304 cmp.w #0, r4                             cycles: 1
+
+jl done 
+
+0x0080: 0x3805 jl 0x008c  (offset: 10)                  cycles: 2
+
+cmp #0, r4
+
+0x0082: 0x9304 cmp.w #0, r4                             cycles: 1
+
+jz done
+
+0x0084: 0x2403 jeq 0x008c  (offset: 6)                  cycles: 2
+
+add r5, r4      ; add numurator and denom
+
+0x0086: 0x5504 add.w r5, r4                             cycles: 1
+
+add #1, r8      ; counts number denominators in numurator
+
+0x0088: 0x5318 add.w #1, r8                             cycles: 1
+
+jmp posResult
+
+0x008a: 0x3ff9 jmp 0x007e  (offset: -14)                cycles: 2
+
+
+done:
+ret
+
+0x008c: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+
+finish:
+BIS #00010h,SR
+
+0x008e: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x0090: 0x0010
+
+
+.enddata sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                          main 00000000 0
+                          flip 0000004a 0
+                       flipNum 00000058 0
+                     flipDenom 00000064 0
+                           div 0000006a 0
+                     negResult 00000070 0
+                     posResult 0000007e 0
+                          done 0000008c 0
+                        finish 0000008e 0
+ -> Total symbols: 9
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 59
+   Code Bytes: 146
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0091 (145)
+

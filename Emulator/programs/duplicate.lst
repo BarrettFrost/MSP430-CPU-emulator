@@ -1,0 +1,156 @@
+	.define LIST_IN		0x0200			;Memory allocation LIST_IN for original array
+	.define LIST_OUT	0x0500			;Memory allocation LIST_OUT for processed unique-element array
+			mov.w	#LIST_IN, R4
+
+0x0000: 0x4034 mov.w #0x0200, r4                        cycles: 2
+0x0002: 0x0200
+
+			mov.w	#6, 0(R4)
+
+0x0004: 0x40b4 mov.w #0x0006, 0(r4)                     cycles: 5
+0x0006: 0x0006
+0x0008: 0x0000
+
+			mov.w	#1, 2(R4)
+
+0x000a: 0x4394 mov.w #1, 2(r4)                          cycles: 4
+0x000c: 0x0002
+
+			mov.w	#1, 4(R4)
+
+0x000e: 0x4394 mov.w #1, 4(r4)                          cycles: 4
+0x0010: 0x0004
+
+			mov.w	#3, 6(R4)
+
+0x0012: 0x40b4 mov.w #0x0003, 6(r4)                     cycles: 5
+0x0014: 0x0003
+0x0016: 0x0006
+
+			mov.w	#4, 8(R4)
+
+0x0018: 0x42a4 mov.w #4, 8(r4)                          cycles: 4
+0x001a: 0x0008
+
+			mov.w	#4, 10(R4)
+
+0x001c: 0x42a4 mov.w #4, 10(r4)                         cycles: 4
+0x001e: 0x000a
+
+			mov.w	#4, 12(R4)
+
+0x0020: 0x42a4 mov.w #4, 12(r4)                         cycles: 4
+0x0022: 0x000c
+
+
+			mov.w	#LIST_IN, R4
+
+0x0024: 0x4034 mov.w #0x0200, r4                        cycles: 2
+0x0026: 0x0200
+
+			mov.w	#LIST_OUT, R5
+
+0x0028: 0x4035 mov.w #0x0500, r5                        cycles: 2
+0x002a: 0x0500
+
+			mov.w	@R4+, R6       ;R6 is the counter
+
+0x002c: 0x4436 mov.w @r4+, r6                           cycles: 2
+
+			dec		R6
+
+0x002e: 0x8316 sub.w #1, r6                             cycles: 1
+
+			mov.w	R5, R7         ;R7 points to the memory that records the new array's size
+
+0x0030: 0x4507 mov.w r5, r7                             cycles: 1
+
+			clr.w	0(R7)          ;0(R7) records the size of new array
+
+0x0032: 0x4387 mov.w #0, 0(r7)                          cycles: 4
+0x0034: 0x0000
+
+			incd	R5
+
+0x0036: 0x5325 add.w #2, r5                             cycles: 1
+
+LOOP:		cmp.w	@R4+, 0(R4)    ;Compar R4[i] and R4[i+1]
+
+0x0038: 0x94b4 cmp.w @r4+, 0(r4)                        cycles: 5
+0x003a: 0x0000
+
+			jz		SKIP           ;If equal, keep looping
+
+0x003c: 0x2406 jeq 0x004a  (offset: 12)                 cycles: 2
+
+			mov.w	-2(R4), 0(R5)  ;If not equal, we have non-duplicate elements. Move a unique to new array
+
+0x003e: 0x4495 mov.w -2(r4), 0(r5)                      cycles: 6
+0x0040: 0xfffe
+0x0042: 0x0000
+
+			incd	R5
+
+0x0044: 0x5325 add.w #2, r5                             cycles: 1
+
+			inc		0(R7)          ;Increment new array size
+
+0x0046: 0x5397 add.w #1, 0(r7)                          cycles: 4
+0x0048: 0x0000
+
+SKIP:		dec		R6
+
+0x004a: 0x8316 sub.w #1, r6                             cycles: 1
+
+			jnz		LOOP
+
+0x004c: 0x23f5 jne 0x0038  (offset: -22)                cycles: 2
+
+			mov.w	@R4, 0(R5)     ;When loop ends, always move the last old array element to new array
+
+0x004e: 0x44a5 mov.w @r4, 0(r5)                         cycles: 5
+0x0050: 0x0000
+
+			inc		0(R7)
+
+0x0052: 0x5397 add.w #1, 0(r7)                          cycles: 4
+0x0054: 0x0000
+
+infinit:		call       refresh
+
+0x0056: 0x1290 call 0x0400                              cycles: 5
+0x0058: 0x03a8
+
+                        BIS	   #00010h, SR
+
+0x005a: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x005c: 0x0010
+
+.org 00400h
+refresh:
+                        ret
+
+0x0400: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+.enddata sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                          LOOP 00000038 0
+                          SKIP 0000004a 0
+                       infinit 00000056 0
+                       refresh 00000400 0
+ -> Total symbols: 4
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 27
+   Code Bytes: 96
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0401 (1025)
+

@@ -1,0 +1,169 @@
+;R6 stores the address to the array. The first element of the array is its size, followed by the actual elements.
+;Sorting is done in place. 
+.define display 00500h
+
+init:
+                        mov     #display, r6
+
+0x0000: 0x4036 mov.w #0x0500, r6                        cycles: 2
+0x0002: 0x0500
+
+                        mov     #7, 0(r6)
+
+0x0004: 0x40b6 mov.w #0x0007, 0(r6)                     cycles: 5
+0x0006: 0x0007
+0x0008: 0x0000
+
+                        mov     #2, 1(r6)
+
+0x000a: 0x43a6 mov.w #2, 1(r6)                          cycles: 4
+0x000c: 0x0001
+
+                        mov     #8, 2(r6)
+
+0x000e: 0x42b6 mov.w #8, 2(r6)                          cycles: 4
+0x0010: 0x0002
+
+                        mov     #5, 3(r6)
+
+0x0012: 0x40b6 mov.w #0x0005, 3(r6)                     cycles: 5
+0x0014: 0x0005
+0x0016: 0x0003
+
+                        mov     #3, 4(r6)
+
+0x0018: 0x40b6 mov.w #0x0003, 4(r6)                     cycles: 5
+0x001a: 0x0003
+0x001c: 0x0004
+
+                        mov     #9, 5(r6)
+
+0x001e: 0x40b6 mov.w #0x0009, 5(r6)                     cycles: 5
+0x0020: 0x0009
+0x0022: 0x0005
+
+                        mov     #4, 6(r6)
+
+0x0024: 0x42a6 mov.w #4, 6(r6)                          cycles: 4
+0x0026: 0x0006
+
+                        mov     #1, 7(r6)
+
+0x0028: 0x4396 mov.w #1, 7(r6)                          cycles: 4
+0x002a: 0x0007
+
+SORT:
+			clr.w	R5				; R5 is the counter for outerloop, start from 0 counting up
+
+0x002c: 0x4305 mov.w #0, r5                             cycles: 1
+
+			mov.b	@R6, R10		; R10 is the outerloop boundary, counting from n - 1 down
+
+0x002e: 0x466a mov.b @r6, r10                           cycles: 2
+
+			dec		R10				; R10 = n - 1
+
+0x0030: 0x831a sub.w #1, r10                            cycles: 1
+
+
+OUTLP:		mov.w	R6, R8			; copy R6 to R8 to preserve R6
+
+0x0032: 0x4608 mov.w r6, r8                             cycles: 1
+
+			mov.b	@R8+, R7		; R7 is the counter for innerloop
+
+0x0034: 0x4877 mov.b @r8+, r7                           cycles: 2
+
+			sub.b	R5, R7			; counting from n - 1 - R5 down
+
+0x0036: 0x8547 sub.b r5, r7                             cycles: 1
+
+			dec		R7
+
+0x0038: 0x8317 sub.w #1, r7                             cycles: 1
+
+
+INLP:		cmp.b	@R8+, 0(R8)		; compare the adjacent array element values R6[n] and R6[n+1]
+
+0x003a: 0x98f8 cmp.b @r8+, 0(r8)                        cycles: 5
+0x003c: 0x0000
+
+			jge		SKIP			; if R6[n+1] >= R6[n], skip the swap
+
+0x003e: 0x3406 jge 0x004c  (offset: 12)                 cycles: 2
+
+			mov.b	@R8, R9			; R9 is temp. temp = R6[n+1]
+
+0x0040: 0x4869 mov.b @r8, r9                            cycles: 2
+
+			mov.b	-1(R8), 0(R8)	; R6[n+1] = R6[n]
+
+0x0042: 0x48d8 mov.b -1(r8), 0(r8)                      cycles: 6
+0x0044: 0xffff
+0x0046: 0x0000
+
+			mov.b	R9, -1(R8)		; R6[n] = temp
+
+0x0048: 0x49c8 mov.b r9, -1(r8)                         cycles: 4
+0x004a: 0xffff
+
+
+SKIP:		dec		R7				; R7--
+
+0x004c: 0x8317 sub.w #1, r7                             cycles: 1
+
+			jnz		INLP
+
+0x004e: 0x23f5 jne 0x003a  (offset: -22)                cycles: 2
+
+			inc		R5				; R5++, after each innerloop
+
+0x0050: 0x5315 add.w #1, r5                             cycles: 1
+
+			dec		R10				; R10--
+
+0x0052: 0x831a sub.w #1, r10                            cycles: 1
+
+			jnz		OUTLP
+
+0x0054: 0x23ee jne 0x0032  (offset: -36)                cycles: 2
+
+                        call            &refresh
+
+0x0056: 0x1292 call &0x0400                             cycles: 5
+0x0058: 0x0400
+
+			BIS #00010h,SR
+
+0x005a: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x005c: 0x0010
+
+
+.org 00400h
+refresh:                ret
+
+0x0400: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+.enddata sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                          init 00000000 0
+                          SORT 0000002c 0
+                         OUTLP 00000032 0
+                          INLP 0000003a 0
+                          SKIP 0000004c 0
+                       refresh 00000400 0
+ -> Total symbols: 6
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 29
+   Code Bytes: 96
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0401 (1025)
+

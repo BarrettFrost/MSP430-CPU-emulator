@@ -1,0 +1,33 @@
+infinite:
+jmp infinite
+
+0x0000: 0x3fff jmp 0x0000  (offset: -2)                 cycles: 2
+
+
+finish:
+
+BIS #00010h, r2
+
+0x0002: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x0004: 0x0010
+
+
+.enddata sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                      infinite 00000000 0
+                        finish 00000002 0
+ -> Total symbols: 2
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 2
+   Code Bytes: 6
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0005 (5)
+

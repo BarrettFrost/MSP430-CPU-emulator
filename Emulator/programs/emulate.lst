@@ -1,0 +1,141 @@
+.include "msp430x2xx.inc"
+
+mov #0FFFFh, r4
+
+0x0000: 0x4334 mov.w #-1, r4                            cycles: 1
+
+setc
+
+0x0002: 0xd312 setc  --  bis.w #1, SR                   cycles: 1
+
+adc r4
+
+0x0004: 0x6304 addc.w #0, r4                            cycles: 1
+
+br #036h
+
+0x0006: 0x4030 mov.w #0x0036, PC                        cycles: 3
+0x0008: 0x0036
+
+
+continue:
+mov #10, r6
+
+0x000a: 0x4036 mov.w #0x000a, r6                        cycles: 2
+0x000c: 0x000a
+
+add #0FFFFh, r6
+
+0x000e: 0x5336 add.w #-1, r6                            cycles: 1
+
+clrc 
+
+0x0010: 0xc312 clrc  --  bic.w #1, SR                   cycles: 1
+
+mov #1, r6
+
+0x0012: 0x4316 mov.w #1, r6                             cycles: 1
+
+sub #1, r6
+
+0x0014: 0x8316 sub.w #1, r6                             cycles: 1
+
+clrz
+
+0x0016: 0xc322 clrz  --  bic.w #2, SR                   cycles: 1
+
+mov #0, r6
+
+0x0018: 0x4306 mov.w #0, r6                             cycles: 1
+
+sub #1, r6
+
+0x001a: 0x8316 sub.w #1, r6                             cycles: 1
+
+clrn
+
+0x001c: 0xc222 clrn  --  bic.w #4, SR                   cycles: 1
+
+setc 
+
+0x001e: 0xd312 setc  --  bis.w #1, SR                   cycles: 1
+
+dadc r7
+
+0x0020: 0xa307 dadd.w #0, r7                            cycles: 1
+
+dec r8
+
+0x0022: 0x8318 sub.w #1, r8                             cycles: 1
+
+decd r9
+
+0x0024: 0x8329 sub.w #2, r9                             cycles: 1
+
+DINT
+
+0x0026: 0xc232 dint  --  bic.w #8, SR                   cycles: 1
+
+EINT
+
+0x0028: 0xd232 eint  --  bis.w #8, SR                   cycles: 1
+
+inc r10
+
+0x002a: 0x531a add.w #1, r10                            cycles: 1
+
+incd r11
+
+0x002c: 0x532b add.w #2, r11                            cycles: 1
+
+inv r12
+
+0x002e: 0xe33c xor.w #-1, r12                           cycles: 1
+
+nop
+
+0x0030: 0x4303 nop   --  mov.w #0, CG                   cycles: 1
+
+BIS #00010h,SR
+
+0x0032: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x0034: 0x0010
+
+
+branch:
+mov #4, r5
+
+0x0036: 0x4225 mov.w #4, r5                             cycles: 1
+
+clr r5
+
+0x0038: 0x4305 mov.w #0, r5                             cycles: 1
+
+br #8
+
+0x003a: 0x4230 mov.w #8, PC                             cycles: 2
+
+
+
+
+
+
+data sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                      continue 0000000a 0
+                        branch 00000036 0
+ -> Total symbols: 2
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 27
+   Code Bytes: 60
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 003b (59)
+

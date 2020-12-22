@@ -1,0 +1,82 @@
+; multiply 2 integers
+; divide 2 integers fixed point 8 bits
+.define X -8
+.define M 4
+main:
+
+mov #0, r4
+
+0x0000: 0x4304 mov.w #0, r4                             cycles: 1
+
+mov #0, r5
+
+0x0002: 0x4305 mov.w #0, r5                             cycles: 1
+
+call mul
+
+0x0004: 0x1290 call 0x000a                              cycles: 5
+0x0006: 0x0004
+
+jmp finish
+
+0x0008: 0x3c06 jmp 0x0016  (offset: 12)                 cycles: 2
+
+
+mul:
+
+cmp #M, r4
+
+0x000a: 0x9224 cmp.w #4, r4                             cycles: 1
+
+jz done
+
+0x000c: 0x2406 jeq 0x001a  (offset: 12)                 cycles: 2
+
+add #X, r5
+
+0x000e: 0x5035 add.w #0xfff8, r5                        cycles: 2
+0x0010: 0xfff8
+
+add #1, r4
+
+0x0012: 0x5314 add.w #1, r4                             cycles: 1
+
+jmp mul
+
+0x0014: 0x3ffa jmp 0x000a  (offset: -12)                cycles: 2
+
+
+finish:
+BIS #00010h,SR
+
+0x0016: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x0018: 0x0010
+
+
+done:
+ret
+
+0x001a: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+.end
+data sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                          main 00000000 0
+                           mul 0000000a 0
+                        finish 00000016 0
+                          done 0000001a 0
+ -> Total symbols: 4
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 11
+   Code Bytes: 28
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 001b (27)
+

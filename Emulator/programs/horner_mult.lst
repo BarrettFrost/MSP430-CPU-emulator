@@ -1,0 +1,252 @@
+; horner multiplication integers
+
+.define X 41
+.define M 441
+.define diff 00300h
+.define print 00700h
+.define startBit 00100h     ; start from right most bit
+
+; 0.12345 * 0.14325 = 0.0176842125
+
+start:
+mov #X, r4
+
+0x0000: 0x4034 mov.w #0x0029, r4                        cycles: 2
+0x0002: 0x0029
+
+mov #M, r5
+
+0x0004: 0x4035 mov.w #0x01b9, r5                        cycles: 2
+0x0006: 0x01b9
+
+mov #startBit, r6     ;for the AND compare
+
+0x0008: 0x4036 mov.w #0x0100, r6                        cycles: 2
+0x000a: 0x0100
+
+mov #0, r7
+
+0x000c: 0x4307 mov.w #0, r7                             cycles: 1
+
+mov #0, r11
+
+0x000e: 0x430b mov.w #0, r11                            cycles: 1
+
+mov #diff, r12
+
+0x0010: 0x403c mov.w #0x0300, r12                       cycles: 2
+0x0012: 0x0300
+
+mov #0, r9
+
+0x0014: 0x4309 mov.w #0, r9                             cycles: 1
+
+call &findBits
+
+0x0016: 0x1292 call &0x0026                             cycles: 5
+0x0018: 0x0026
+
+mov #1, r7
+
+0x001a: 0x4317 mov.w #1, r7                             cycles: 1
+
+mov #diff, r12
+
+0x001c: 0x403c mov.w #0x0300, r12                       cycles: 2
+0x001e: 0x0300
+
+add #1, r12         ;address of the first difference
+
+0x0020: 0x531c add.w #1, r12                            cycles: 1
+
+mov r4, r8
+
+0x0022: 0x4408 mov.w r4, r8                             cycles: 1
+
+jmp mul
+
+0x0024: 0x3c13 jmp 0x004c  (offset: 38)                 cycles: 2
+
+
+findBits:
+cmp #9, r7  ;number of bits in multiplier (M) need to change for different multipler
+
+0x0026: 0x9037 cmp.w #0x0009, r7                        cycles: 2
+0x0028: 0x0009
+
+jz done
+
+0x002a: 0x2421 jeq 0x006e  (offset: 66)                 cycles: 2
+
+add #1, r7
+
+0x002c: 0x5317 add.w #1, r7                             cycles: 1
+
+add #1, r13
+
+0x002e: 0x531d add.w #1, r13                            cycles: 1
+
+mov r5, r8
+
+0x0030: 0x4508 mov.w r5, r8                             cycles: 1
+
+and r6, r8    
+
+0x0032: 0xf608 and.w r6, r8                             cycles: 1
+
+cmp r6, r8    
+
+0x0034: 0x9608 cmp.w r6, r8                             cycles: 1
+
+jeq countBit  ; count the bit
+
+0x0036: 0x2403 jeq 0x003e  (offset: 6)                  cycles: 2
+
+clrc
+
+0x0038: 0xc312 clrc  --  bic.w #1, SR                   cycles: 1
+
+rrc r6      ; move the 1 in startBit the the right;
+
+0x003a: 0x1006 rrc.w r6                                 cycles: 1
+
+jmp findBits
+
+0x003c: 0x3ff4 jmp 0x0026  (offset: -24)                cycles: 2
+
+
+countBit:
+add #1, r9      ;number of 1s in multipler
+
+0x003e: 0x5319 add.w #1, r9                             cycles: 1
+
+mov r13, @r12   ; stores difference between nearest 1 in multiplier
+
+0x0040: 0x4d8c mov.w r13, 0(r12)                        cycles: 4
+0x0042: 0x0000
+
+add #1, r12     ; changes the address 
+
+0x0044: 0x531c add.w #1, r12                            cycles: 1
+
+mov #0, r13     ; zeros for next difference
+
+0x0046: 0x430d mov.w #0, r13                            cycles: 1
+
+rrc r6          ; move the 1 in startBit the the right;
+
+0x0048: 0x1006 rrc.w r6                                 cycles: 1
+
+jmp findBits
+
+0x004a: 0x3fed jmp 0x0026  (offset: -38)                cycles: 2
+
+
+mul:
+cmp r9, r7    ; number of 1s in multiplier
+
+0x004c: 0x9907 cmp.w r9, r7                             cycles: 1
+
+jz last      
+
+0x004e: 0x240e jeq 0x006c  (offset: 28)                 cycles: 2
+
+mov @r12, r14  ;move difference between 1s
+
+0x0050: 0x4c2e mov.w @r12, r14                          cycles: 2
+
+call rotate    
+
+0x0052: 0x1290 call 0x0062                              cycles: 5
+0x0054: 0x000e
+
+add #X, r8    ; add X the rotated result
+
+0x0056: 0x5038 add.w #0x0029, r8                        cycles: 2
+0x0058: 0x0029
+
+add #1, r12   ; move address
+
+0x005a: 0x531c add.w #1, r12                            cycles: 1
+
+add #1, r7    
+
+0x005c: 0x5317 add.w #1, r7                             cycles: 1
+
+mov #0, r11   
+
+0x005e: 0x430b mov.w #0, r11                            cycles: 1
+
+jmp mul
+
+0x0060: 0x3ff5 jmp 0x004c  (offset: -22)                cycles: 2
+
+
+rotate:
+
+cmp r14, r11  
+
+0x0062: 0x9e0b cmp.w r14, r11                           cycles: 1
+
+jz done
+
+0x0064: 0x2404 jeq 0x006e  (offset: 8)                  cycles: 2
+
+add #1, r11
+
+0x0066: 0x531b add.w #1, r11                            cycles: 1
+
+rlc r8          ;shift right the X by the difference
+
+0x0068: 0x6808 addc.w r8, r8                            cycles: 1
+
+jmp rotate
+
+0x006a: 0x3ffb jmp 0x0062  (offset: -10)                cycles: 2
+
+
+last:
+jmp finish       ;r8 has result
+
+0x006c: 0x3c01 jmp 0x0070  (offset: 2)                  cycles: 2
+
+
+done:
+ret
+
+0x006e: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+finish:
+BIS #00010h,SR
+
+0x0070: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x0072: 0x0010
+
+
+.end
+data sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                         start 00000000 0
+                      findBits 00000026 0
+                      countBit 0000003e 0
+                           mul 0000004c 0
+                        rotate 00000062 0
+                          last 0000006c 0
+                          done 0000006e 0
+                        finish 00000070 0
+ -> Total symbols: 8
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 47
+   Code Bytes: 116
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0073 (115)
+

@@ -1,0 +1,145 @@
+
+start:
+
+mov 00200h, r1
+
+0x0000: 0x4011 mov.w 0x0200, SP                         cycles: 3
+0x0002: 0x01fe
+
+mov.b #0, r4
+
+0x0004: 0x4344 mov.b #0, r4                             cycles: 1
+
+call &for
+
+0x0006: 0x1292 call &0x0018                             cycles: 5
+0x0008: 0x0018
+
+mov.b #0, r5
+
+0x000a: 0x4345 mov.b #0, r5                             cycles: 1
+
+mov.b #1, r6
+
+0x000c: 0x4356 mov.b #1, r6                             cycles: 1
+
+mov.b #0, r7
+
+0x000e: 0x4347 mov.b #0, r7                             cycles: 1
+
+call &while
+
+0x0010: 0x1292 call &0x0024                             cycles: 5
+0x0012: 0x0024
+
+BIS #00010h,SR
+
+0x0014: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x0016: 0x0010
+
+
+for:
+CMP.b #10, R4
+
+0x0018: 0x9074 cmp.b #0x0a, r4                          cycles: 2
+0x001a: 0x000a
+
+jz for_done
+
+0x001c: 0x2402 jeq 0x0022  (offset: 4)                  cycles: 2
+
+add.b #1, r4
+
+0x001e: 0x5354 add.b #1, r4                             cycles: 1
+
+jmp for
+
+0x0020: 0x3ffb jmp 0x0018  (offset: -10)                cycles: 2
+
+
+for_done:
+ret
+
+0x0022: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+while:
+bit.b #1, r5
+
+0x0024: 0xb355 bit.b #1, r5                             cycles: 1
+
+jnz while_done
+
+0x0026: 0x200a jne 0x003c  (offset: 20)                 cycles: 2
+
+rla.b r6
+
+0x0028: 0x5646 add.b r6, r6                             cycles: 1
+
+call &if
+
+0x002a: 0x1292 call &0x0032                             cycles: 5
+0x002c: 0x0032
+
+add.b #1, r7
+
+0x002e: 0x5357 add.b #1, r7                             cycles: 1
+
+jmp while
+
+0x0030: 0x3ff9 jmp 0x0024  (offset: -14)                cycles: 2
+
+
+if:
+cmp.b #0, r6
+
+0x0032: 0x9346 cmp.b #0, r6                             cycles: 1
+
+jz else  
+
+0x0034: 0x2401 jeq 0x0038  (offset: 2)                  cycles: 2
+
+ret
+
+0x0036: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+else:
+mov.b #1, r5
+
+0x0038: 0x4355 mov.b #1, r5                             cycles: 1
+
+ret
+
+0x003a: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+
+while_done:
+ret 
+
+0x003c: 0x4130 ret   --  mov.w @SP+, PC                 cycles: 3
+
+.enddata sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                         start 00000000 0
+                           for 00000018 0
+                      for_done 00000022 0
+                         while 00000024 0
+                            if 00000032 0
+                          else 00000038 0
+                    while_done 0000003c 0
+ -> Total symbols: 7
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 25
+   Code Bytes: 62
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 003d (61)
+

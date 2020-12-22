@@ -1,0 +1,50 @@
+; 32 bit addition 100,000+ 150,000
+
+mov #00002h, r4  ; 150,000
+
+0x0000: 0x4324 mov.w #2, r4                             cycles: 1
+
+mov #049F0h, r5
+
+0x0002: 0x4035 mov.w #0x49f0, r5                        cycles: 2
+0x0004: 0x49f0
+
+mov #00001h, r7
+
+0x0006: 0x4317 mov.w #1, r7                             cycles: 1
+
+mov #086A0h, r8
+
+0x0008: 0x4038 mov.w #0x86a0, r8                        cycles: 2
+0x000a: 0x86a0
+
+add r5, r8
+
+0x000c: 0x5508 add.w r5, r8                             cycles: 1
+
+addc r4, r7
+
+0x000e: 0x6407 addc.w r4, r7                            cycles: 1
+
+BIS #00010h,SR
+
+0x0010: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x0012: 0x0010
+
+.enddata sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+ -> Total symbols: 0
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 7
+   Code Bytes: 20
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0013 (19)
+

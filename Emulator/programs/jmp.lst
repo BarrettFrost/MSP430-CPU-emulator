@@ -1,0 +1,162 @@
+.include "msp430x2xx.inc"
+
+.entry_point start
+
+start:
+
+mov #0, r4
+
+0x0000: 0x4304 mov.w #0, r4                             cycles: 1
+
+mov #1, r5
+
+0x0002: 0x4315 mov.w #1, r5                             cycles: 1
+
+cmp r5, r4
+
+0x0004: 0x9504 cmp.w r5, r4                             cycles: 1
+
+jne random 
+
+0x0006: 0x2005 jne 0x0012  (offset: 10)                 cycles: 2
+
+
+
+overflow:
+add #1, r4
+
+0x0008: 0x5314 add.w #1, r4                             cycles: 1
+
+cmp r7, r6
+
+0x000a: 0x9706 cmp.w r7, r6                             cycles: 1
+
+jl last
+
+0x000c: 0x380a jl 0x0022  (offset: 20)                  cycles: 2
+
+
+Nocarry:
+add #1, r4
+
+0x000e: 0x5314 add.w #1, r4                             cycles: 1
+
+jnc carry 
+
+0x0010: 0x280d jlo 0x002c  (offset: 26)                 cycles: 2
+
+
+random:
+add #1, r4;
+
+0x0012: 0x5314 add.w #1, r4                             cycles: 1
+
+cmp r5, r4
+
+0x0014: 0x9504 cmp.w r5, r4                             cycles: 1
+
+jeq Nocarry
+
+0x0016: 0x27fb jeq 0x000e  (offset: -10)                cycles: 2
+
+
+negative:
+add #1, r4
+
+0x0018: 0x5314 add.w #1, r4                             cycles: 1
+
+mov #-1, r6
+
+0x001a: 0x4336 mov.w #-1, r6                            cycles: 1
+
+mov #0, r7
+
+0x001c: 0x4307 mov.w #0, r7                             cycles: 1
+
+cmp r7, r6
+
+0x001e: 0x9706 cmp.w r7, r6                             cycles: 1
+
+jn gl
+
+0x0020: 0x3002 jn 0x0026  (offset: 4)                   cycles: 2
+
+
+last:
+add #1, r4
+
+0x0022: 0x5314 add.w #1, r4                             cycles: 1
+
+jmp stop
+
+0x0024: 0x3c08 jmp 0x0036  (offset: 16)                 cycles: 2
+
+
+gl:
+add #1, r4
+
+0x0026: 0x5314 add.w #1, r4                             cycles: 1
+
+cmp r7,r4
+
+0x0028: 0x9704 cmp.w r7, r4                             cycles: 1
+
+jge overflow
+
+0x002a: 0x37ee jge 0x0008  (offset: -36)                cycles: 2
+
+
+carry:
+add #1, r4
+
+0x002c: 0x5314 add.w #1, r4                             cycles: 1
+
+mov #5, r5
+
+0x002e: 0x4035 mov.w #0x0005, r5                        cycles: 2
+0x0030: 0x0005
+
+add.b #255, r5
+
+0x0032: 0x5375 add.b #-1, r5                            cycles: 1
+
+jc negative
+
+0x0034: 0x2ff1 jhs 0x0018  (offset: -30)                cycles: 2
+
+
+
+stop:
+BIS #00010h,SR
+
+0x0036: 0xd032 bis.w #0x0010, SR                        cycles: 2
+0x0038: 0x0010
+
+
+
+.enddata sections:
+
+
+Program Info:
+                         LABEL ADDRESS  SCOPE
+                         start 00000000 0
+                      overflow 00000008 0
+                       Nocarry 0000000e 0
+                        random 00000012 0
+                      negative 00000018 0
+                          last 00000022 0
+                            gl 00000026 0
+                         carry 0000002c 0
+                          stop 00000036 0
+ -> Total symbols: 9
+
+Include Paths: .
+               include/msp430
+               /usr/local/share/naken_asm/include
+               include
+ Instructions: 27
+   Code Bytes: 58
+   Data Bytes: 0
+  Low Address: 0000 (0)
+ High Address: 0039 (57)
+
